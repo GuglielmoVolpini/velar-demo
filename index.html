@@ -126,7 +126,7 @@
 
     <!-- App Container (no PIN in demo) -->
     <div id="app-container">
-        <div id="app" class="max-w-full mx-auto p-4 pt-12 sm:p-6 lg:p-8 space-y-8">
+        <div id="app" class="max-w-[1400px] mx-auto px-4 pt-6 sm:px-8 lg:px-12 pb-8 space-y-6">
 
             <!-- Header -->
             <header
@@ -147,47 +147,46 @@
                     </div>
                     <span class="demo-badge"><i class="fas fa-flask text-[8px]"></i> Demo</span>
                 </div>
-        </div>
 
-        <div class="flex items-center space-x-1.5 sm:space-x-3">
-            <!-- Theme Toggle -->
-            <button onclick="toggleTheme()"
-                class="p-1.5 sm:p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors"
-                title="Tema">
-                <i id="theme-icon" class="fas fa-moon text-base sm:text-lg"></i>
-            </button>
+                <div class="flex items-center space-x-1.5 sm:space-x-3">
+                    <!-- Theme Toggle -->
+                    <button onclick="toggleTheme()"
+                        class="p-1.5 sm:p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors"
+                        title="Tema">
+                        <i id="theme-icon" class="fas fa-moon text-base sm:text-lg"></i>
+                    </button>
 
-            <!-- Privacy Toggle -->
-            <button id="privacy-toggle" onclick="togglePrivacyMode()"
-                class="p-1.5 sm:p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors"
-                title="Privacy Mode">
-                <i id="privacy-icon" class="fas fa-eye text-base sm:text-lg"></i>
-            </button>
+                    <!-- Privacy Toggle -->
+                    <button id="privacy-toggle" onclick="togglePrivacyMode()"
+                        class="p-1.5 sm:p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors"
+                        title="Privacy Mode">
+                        <i id="privacy-icon" class="fas fa-eye text-base sm:text-lg"></i>
+                    </button>
 
-            <!-- Currency Selector -->
-            <select id="currencySelector" onchange="app.changeCurrency(this.value)"
-                class="appearance-none bg-slate-200/50 dark:bg-slate-800/50 px-2 py-1 text-[10px] sm:px-3 sm:py-1.5 pr-5 sm:pr-8 rounded-full border border-slate-300/50 dark:border-slate-700/50 sm:text-xs font-medium text-slate-600 dark:text-slate-300 transition-all cursor-pointer hover:bg-slate-300/50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .4rem top 50%; background-size: .45rem auto;">
-                <option value="EUR" selected>🇪🇺​ EUR</option>
-                <option value="USD">🇺🇸​ USD</option>
-                <option value="GBP">🇬🇧​ GBP</option>
-                <option value="CHF">🇨🇭​ CHF</option>
-                <option value="JPY">🇯🇵​ JPY</option>
-            </select>
+                    <!-- Currency Selector -->
+                    <select id="currencySelector" onchange="app.changeCurrency(this.value)"
+                        class="appearance-none bg-slate-200/50 dark:bg-slate-800/50 px-2 py-1 text-[10px] sm:px-3 sm:py-1.5 pr-5 sm:pr-8 rounded-full border border-slate-300/50 dark:border-slate-700/50 sm:text-xs font-medium text-slate-600 dark:text-slate-300 transition-all cursor-pointer hover:bg-slate-300/50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .4rem top 50%; background-size: .45rem auto;">
+                        <option value="EUR" selected>🇪🇺​ EUR</option>
+                        <option value="USD">🇺🇸​ USD</option>
+                        <option value="GBP">🇬🇧​ GBP</option>
+                        <option value="CHF">🇨🇭​ CHF</option>
+                        <option value="JPY">🇯🇵​ JPY</option>
+                    </select>
 
-            <div
-                class="flex items-center space-x-1 sm:space-x-2 bg-slate-200/50 dark:bg-slate-800/50 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-slate-300/50 dark:border-slate-700/50">
-                <span class="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
-                    <span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-500"></span>
-                </span>
-                <span
-                    class="hidden sm:inline text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors">Demo
-                    Mode</span>
-            </div>
-        </div>
-        </header>
+                    <div
+                        class="flex items-center space-x-1 sm:space-x-2 bg-slate-200/50 dark:bg-slate-800/50 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-slate-300/50 dark:border-slate-700/50">
+                        <span class="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-500"></span>
+                        </span>
+                        <span
+                            class="hidden sm:inline text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors">Demo
+                            Mode</span>
+                    </div>
+                </div>
+            </header>
 
         <!-- Navigation (Tabs) -->
         <nav
@@ -229,7 +228,7 @@
                 <div id="dashboard-grid" class="grid-stack">
 
                     <!-- Widget 1: Total NW Card -->
-                    <div class="grid-stack-item" gs-id="widget-nw" gs-x="0" gs-y="0" gs-w="8" gs-h="2" gs-min-w="4"
+                    <div class="grid-stack-item" gs-id="widget-nw" gs-x="0" gs-y="0" gs-w="8" gs-h="3" gs-min-w="4"
                         gs-min-h="2">
                         <div
                             class="grid-stack-item-content glass-panel p-6 rounded-2xl relative overflow-hidden group hover:bg-glass transition-all duration-300 flex flex-col justify-between">
@@ -256,7 +255,7 @@
                     </div>
 
                     <!-- Widget 2: YTD & MoM Card -->
-                    <div class="grid-stack-item" gs-id="widget-ytd" gs-x="8" gs-y="0" gs-w="4" gs-h="2" gs-min-w="3"
+                    <div class="grid-stack-item" gs-id="widget-ytd" gs-x="8" gs-y="0" gs-w="4" gs-h="3" gs-min-w="3"
                         gs-min-h="2">
                         <div
                             class="grid-stack-item-content glass-panel p-6 rounded-2xl relative overflow-hidden group hover:bg-glass transition-all duration-300 flex flex-col justify-center">
@@ -306,7 +305,7 @@
                     </div>
 
                     <!-- Widget 3: Smart Insights -->
-                    <div class="grid-stack-item" gs-id="widget-insights" gs-x="0" gs-y="2" gs-w="12" gs-h="2"
+                    <div class="grid-stack-item" gs-id="widget-insights" gs-x="0" gs-y="3" gs-w="12" gs-h="2"
                         gs-min-w="4" gs-min-h="2">
                         <div class="grid-stack-item-content w-full h-full p-1 overflow-visible">
                             <div id="smart-insights-container" class="hidden mb-2">
@@ -321,7 +320,7 @@
                     </div>
 
                     <!-- Widget 4: Milestones -->
-                    <div class="grid-stack-item" gs-id="widget-milestones" gs-x="0" gs-y="4" gs-w="12" gs-h="2"
+                    <div class="grid-stack-item" gs-id="widget-milestones" gs-x="0" gs-y="5" gs-w="12" gs-h="2"
                         gs-min-w="4" gs-min-h="2">
                         <div class="grid-stack-item-content w-full h-full overflow-y-auto overflow-x-hidden p-1">
                             <div class="mb-2">
@@ -337,7 +336,7 @@
                     </div>
 
                     <!-- Widget 5: Main Chart -->
-                    <div class="grid-stack-item" gs-id="widget-main-chart" gs-x="0" gs-y="6" gs-w="12" gs-h="4"
+                    <div class="grid-stack-item" gs-id="widget-main-chart" gs-x="0" gs-y="7" gs-w="12" gs-h="5"
                         gs-min-w="6" gs-min-h="3">
                         <div class="grid-stack-item-content glass-panel p-3 sm:p-6 rounded-2xl flex flex-col">
                             <div
@@ -383,7 +382,7 @@
                     </div>
 
                     <!-- Widget 6: PAC Chart -->
-                    <div class="grid-stack-item" gs-id="widget-pac-chart" gs-x="0" gs-y="10" gs-w="12" gs-h="4"
+                    <div class="grid-stack-item" gs-id="widget-pac-chart" gs-x="0" gs-y="12" gs-w="12" gs-h="5"
                         gs-min-w="6" gs-min-h="3">
                         <div class="grid-stack-item-content glass-panel p-3 sm:p-6 rounded-2xl flex flex-col">
                             <div
