@@ -3069,12 +3069,12 @@ var DashboardLayout = (function () {
     // Canonical widget registry: defines every valid widget with its default position.
     // This is the single source of truth for what widgets exist and their defaults.
     var WIDGET_DEFAULTS = [
-        { id: 'widget-nw', x: 0, y: 0, w: 8, h: 3, minW: 4, minH: 2 },
-        { id: 'widget-ytd', x: 8, y: 0, w: 4, h: 3, minW: 3, minH: 2 },
-        { id: 'widget-insights', x: 0, y: 3, w: 12, h: 2, minW: 4, minH: 2 },
-        { id: 'widget-milestones', x: 0, y: 5, w: 12, h: 2, minW: 4, minH: 2 },
-        { id: 'widget-main-chart', x: 0, y: 7, w: 12, h: 5, minW: 6, minH: 3 },
-        { id: 'widget-pac-chart', x: 0, y: 12, w: 12, h: 5, minW: 6, minH: 3 }
+        { id: 'widget-nw', x: 0, y: 0, w: 8, h: 4, minW: 4, minH: 2 },
+        { id: 'widget-ytd', x: 8, y: 0, w: 4, h: 4, minW: 3, minH: 2 },
+        { id: 'widget-insights', x: 0, y: 4, w: 12, h: 2, minW: 4, minH: 2 },
+        { id: 'widget-milestones', x: 0, y: 6, w: 12, h: 3, minW: 4, minH: 2 },
+        { id: 'widget-main-chart', x: 0, y: 9, w: 12, h: 5, minW: 6, minH: 3 },
+        { id: 'widget-pac-chart', x: 0, y: 14, w: 12, h: 5, minW: 6, minH: 3 }
     ];
 
     // --- State ---
