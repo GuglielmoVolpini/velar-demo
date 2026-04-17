@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Velar — Demo</title>
+
+    <!-- PWA / Mobile Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NW Tracker">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f172a" id="meta-theme-color">
+
+    <!-- PWA Icons & Manifest -->
+    <link rel="icon" type="image/png" href="AppIcon.png?v=2">
+    <link rel="apple-touch-icon" href="AppIcon.png?v=2">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Typographic Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GridStack.js (static mode only for demo) -->
+    <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0.1/dist/gridstack.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0.1/dist/gridstack-extra.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0.1/dist/gridstack-all.js"></script>
+
+    <!-- Demo Data -->
+    <script src="demo-data.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Annotation Plugin -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- html2pdf.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <!-- Custom configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.1)',
+                        glassBorder: 'rgba(255, 255, 255, 0.2)',
+
+                        // Brand Palette
+                        cosmos: '#0A0F1E',       // Deep Cosmos (Background dark)
+                        naval: '#1A2847',        // Naval (Card dark, sidebar)
+                        sapphire: '#3B8BEB',     // Sapphire Signal (Accent primario, CTA)
+                        wealth: '#00D4A0',       // Wealth Green (Delta positivo)
+                        gold: '#F59E0B',         // Gold Record (Milestone, HoF)
+                        drawdown: '#EF4444',     // Drawdown Red (Delta negativo)
+                        arctic: '#F8FAFF',       // Arctic White (Background light)
+                        slatedeep: '#0F172A',    // Slate Deep (Testo primario dark)
+                        slatemid: '#475569',     // Slate Mid (Testo secondario)
+                        brass: '#C4A882',        // Aged Brass (Dettaglio lusso)
+
+                        // Overrides for existing utility classes
+                        primary: '#3B8BEB',
+                        success: '#00D4A0',
+                        danger: '#EF4444',
+                        darkBg: '#0A0F1E',
+                        slate: {
+                            50: '#F8FAFF',       // arctic
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',      // slatemid
+                            700: '#334155',
+                            800: '#1A2847',      // naval (cards)
+                            900: '#0A0F1E',      // cosmos (bg)
+                        },
+                        blue: {
+                            400: '#3B8BEB',      // sapphire
+                            500: '#3B8BEB',      // sapphire
+                            600: '#2A72C7',
+                        },
+                        emerald: {
+                            400: '#00D4A0',      // wealth
+                            500: '#00D4A0',      // wealth
+                            600: '#00B388',
+                        },
+                        rose: {
+                            400: '#EF4444',      // drawdown
+                            500: '#EF4444',      // drawdown
+                            600: '#DC2626',
+                        },
+                        amber: {
+                            400: '#F59E0B',      // gold
+                            500: '#F59E0B',      // gold
+                            600: '#D97706',
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen selection:bg-primary selection:text-white transition-colors duration-300 pb-20 sm:pb-0">
+
+    <!-- App Container (no PIN in demo) -->
+    <div id="app-container">
+        <div id="app" class="max-w-full mx-auto p-4 pt-12 sm:p-6 lg:p-8 space-y-8">
+
+            <!-- Header -->
+            <header
+                class="flex flex-wrap sm:flex-nowrap justify-between items-center glass-panel p-3 sm:p-4 rounded-2xl gap-3">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- Profile / Settings Avatar -->
+                    <button onclick="openSettingsModal()"
+                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105 transition-all flex-shrink-0"
+                        title="Account & Settings">
+                        G
+                    </button>
+                    <div>
+                        <h1
+                            class="text-base sm:text-xl font-bold tracking-tight text-slate-800 dark:text-white transition-colors leading-tight">
+                            Velar</h1>
+                        <p class="hidden sm:block text-xs text-slate-500 dark:text-slate-400 transition-colors">Wealth
+                            management platform</p>
+                    </div>
+                    <span class="demo-badge"><i class="fas fa-flask text-[8px]"></i> Demo</span>
+                </div>
+        </div>
+
+        <div class="flex items-center space-x-1.5 sm:space-x-3">
+            <!-- Theme Toggle -->
+            <button onclick="toggleTheme()"
+                class="p-1.5 sm:p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors"
+                title="Tema">
+                <i id="theme-icon" class="fas fa-moon text-base sm:text-lg"></i>
+            </button>
+
+            <!-- Privacy Toggle -->
+            <button id="privacy-toggle" onclick="togglePrivacyMode()"
+                class="p-1.5 sm:p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-colors"
+                title="Privacy Mode">
+                <i id="privacy-icon" class="fas fa-eye text-base sm:text-lg"></i>
+            </button>
+
+            <!-- Currency Selector -->
+            <select id="currencySelector" onchange="app.changeCurrency(this.value)"
+                class="appearance-none bg-slate-200/50 dark:bg-slate-800/50 px-2 py-1 text-[10px] sm:px-3 sm:py-1.5 pr-5 sm:pr-8 rounded-full border border-slate-300/50 dark:border-slate-700/50 sm:text-xs font-medium text-slate-600 dark:text-slate-300 transition-all cursor-pointer hover:bg-slate-300/50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .4rem top 50%; background-size: .45rem auto;">
+                <option value="EUR" selected>🇪🇺​ EUR</option>
+                <option value="USD">🇺🇸​ USD</option>
+                <option value="GBP">🇬🇧​ GBP</option>
+                <option value="CHF">🇨🇭​ CHF</option>
+                <option value="JPY">🇯🇵​ JPY</option>
+            </select>
+
+            <div
+                class="flex items-center space-x-1 sm:space-x-2 bg-slate-200/50 dark:bg-slate-800/50 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-slate-300/50 dark:border-slate-700/50">
+                <span class="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-500"></span>
+                </span>
+                <span
+                    class="hidden sm:inline text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors">Demo
+                    Mode</span>
+            </div>
+        </div>
+        </header>
+
+        <!-- Navigation (Tabs) -->
+        <nav
+            class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-[62px] items-center max-w-sm z-[100] bg-slate-100/90 dark:bg-slate-800/90 backdrop-blur-2xl border border-slate-200/50 dark:border-slate-700/50 flex justify-around px-2 rounded-[31px] shadow-[0_10px_35px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_35px_rgba(0,0,0,0.4)] sm:static sm:-translate-x-0 sm:items-stretch sm:h-auto sm:left-auto sm:bottom-auto sm:w-full sm:max-w-none sm:z-auto sm:bg-transparent sm:dark:bg-transparent sm:backdrop-blur-none sm:border-none sm:flex sm:justify-start sm:p-1 sm:glass-panel sm:rounded-xl sm:space-x-1 sm:shadow-none sm:overflow-x-auto">
+            <button onclick="router.navigate('dashboard')" class="nav-btn active" data-page="dashboard">
+                <i class="fas fa-home"></i>Dashboard
+            </button>
+            <button onclick="router.navigate('financials')" class="nav-btn" data-page="financials">
+                <i class="fas fa-coins"></i>Net Worth
+            </button>
+            <button onclick="router.navigate('cashflow')" class="nav-btn" data-page="cashflow">
+                <i class="fas fa-money-bill-wave"></i>Cash Flow
+            </button>
+            <button onclick="router.navigate('allocation')" class="nav-btn" data-page="allocation">
+                <i class="fas fa-chart-pie"></i>Allocation
+            </button>
+            <button onclick="router.navigate('history')" class="nav-btn" data-page="history">
+                <i class="fas fa-calendar-alt"></i>History
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="min-h-[60vh]">
+            <!-- Views will be injected here by JavaScript -->
+
+            <!-- Loading State -->
+            <div id="loading-state" class="flex flex-col items-center justify-center h-64 space-y-4">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin">
+                </div>
+                <p class="text-slate-400 animate-pulse">Loading financial data.</p>
+            </div>
+
+            <!-- Dashboard View (Hidden by default, shown via JS) -->
+            <div id="view-dashboard" class="page-view hidden space-y-6">
+
+
+
+                <!-- KPI Grid / GridStack Container -->
+                <div id="dashboard-grid" class="grid-stack">
+
+                    <!-- Widget 1: Total NW Card -->
+                    <div class="grid-stack-item" gs-id="widget-nw" gs-x="0" gs-y="0" gs-w="8" gs-h="2" gs-min-w="4"
+                        gs-min-h="2">
+                        <div
+                            class="grid-stack-item-content glass-panel p-6 rounded-2xl relative overflow-hidden group hover:bg-glass transition-all duration-300 flex flex-col justify-between">
+                            <div
+                                class="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all pointer-events-none">
+                            </div>
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6">
+                                <div>
+                                    <h3 class="typo-label text-slate-500 dark:text-slate-400 mb-2">Net Worth 2026
+                                    </h3>
+                                    <div class="flex items-baseline space-x-2">
+                                        <span id="kpi-total-nw"
+                                            class="typo-kpi-main text-slate-900 dark:text-white privacy-sensitive">€
+                                            --</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Portfolio Breakdown Container -->
+                            <div id="nw-breakdown"
+                                class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700/50">
+                                <!-- Injected by JS: Progress Bars -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 2: YTD & MoM Card -->
+                    <div class="grid-stack-item" gs-id="widget-ytd" gs-x="8" gs-y="0" gs-w="4" gs-h="2" gs-min-w="3"
+                        gs-min-h="2">
+                        <div
+                            class="grid-stack-item-content glass-panel p-6 rounded-2xl relative overflow-hidden group hover:bg-glass transition-all duration-300 flex flex-col justify-center">
+                            <div
+                                class="absolute -right-6 -top-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all pointer-events-none">
+                            </div>
+                            <!-- YTD Section -->
+                            <div class="mb-4">
+                                <h3 class="typo-label text-slate-500 dark:text-slate-400 mb-1">Year to Date</h3>
+                                <div
+                                    class="flex items-baseline space-x-2 border-b border-slate-200 dark:border-slate-700/50 pb-2 mb-2 privacy-sensitive">
+                                    <span id="kpi-ytd-val" class="typo-kpi-sub text-slate-900 dark:text-white">€
+                                        --</span>
+                                    <span id="kpi-ytd-perc"
+                                        class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">--%</span>
+                                </div>
+                                <!-- Real Return (Market Surplus) -->
+                                <div class="flex flex-col space-y-1 mt-2">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Market
+                                            Return</span>
+                                        <div class="flex items-center space-x-1.5 privacy-sensitive">
+                                            <span id="kpi-surplus-val"
+                                                class="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">€
+                                                --</span>
+                                            <span id="kpi-surplus-perc"
+                                                class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">--%</span>
+                                        </div>
+                                    </div>
+                                    <div id="kpi-surplus-debug"
+                                        class="text-[9px] text-slate-400 dark:text-slate-500 hidden break-words leading-tight">
+                                        <!-- Debug info -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- MoM Section -->
+                            <div>
+                                <h3 class="typo-label text-slate-500 dark:text-slate-400 mb-1">Last 30 Days</h3>
+                                <div class="flex items-baseline space-x-2 privacy-sensitive">
+                                    <span id="kpi-mom-val" class="typo-kpi-sub text-slate-800 dark:text-slate-200">€
+                                        --</span>
+                                    <span id="kpi-mom-perc"
+                                        class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">--%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 3: Smart Insights -->
+                    <div class="grid-stack-item" gs-id="widget-insights" gs-x="0" gs-y="2" gs-w="12" gs-h="2"
+                        gs-min-w="4" gs-min-h="2">
+                        <div class="grid-stack-item-content w-full h-full p-1 overflow-visible">
+                            <div id="smart-insights-container" class="hidden mb-2">
+                                <h3
+                                    class="typo-heading text-slate-700 dark:text-slate-300 font-semibold flex items-center mb-4">
+                                    Insights</h3>
+                                <div id="ai-insights-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <!-- Injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 4: Milestones -->
+                    <div class="grid-stack-item" gs-id="widget-milestones" gs-x="0" gs-y="4" gs-w="12" gs-h="2"
+                        gs-min-w="4" gs-min-h="2">
+                        <div class="grid-stack-item-content w-full h-full overflow-y-auto overflow-x-hidden p-1">
+                            <div class="mb-2">
+                                <h3
+                                    class="typo-heading text-slate-700 dark:text-slate-300 font-semibold flex items-center mb-4">
+                                    Current Milestones</h3>
+                                <div id="milestones-container"
+                                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <!-- Injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 5: Main Chart -->
+                    <div class="grid-stack-item" gs-id="widget-main-chart" gs-x="0" gs-y="6" gs-w="12" gs-h="4"
+                        gs-min-w="6" gs-min-h="3">
+                        <div class="grid-stack-item-content glass-panel p-3 sm:p-6 rounded-2xl flex flex-col">
+                            <div
+                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 w-full">
+                                <h3
+                                    class="text-slate-700 dark:text-slate-300 font-semibold flex items-center whitespace-nowrap min-w-max">
+                                    <svg class="w-5 h-5 mr-2 text-blue-500 dark:text-blue-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z">
+                                        </path>
+                                    </svg>
+                                    Net Worth Evolution
+                                </h3>
+                                <div
+                                    class="flex flex-wrap items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto sm:justify-end">
+                                    <div
+                                        class="flex space-x-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50">
+                                        <button onclick="filterChart('main', '1M', this)"
+                                            class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                            data-filter="1M">1M</button>
+                                        <button onclick="filterChart('main', '6M', this)"
+                                            class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                            data-filter="6M">6M</button>
+                                        <button onclick="filterChart('main', 'YTD', this)"
+                                            class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                            data-filter="YTD">YTD</button>
+                                        <button onclick="filterChart('main', '1Y', this)"
+                                            class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                            data-filter="1Y">1Y</button>
+                                        <button onclick="filterChart('main', 'ALL', this)"
+                                            class="px-2 py-1 text-xs font-medium rounded bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-white shadow"
+                                            data-filter="ALL">ALL</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative h-80 w-full overflow-x-auto overflow-y-hidden">
+                                <div class="w-full h-full md:min-w-[700px]">
+                                    <canvas id="mainChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 6: PAC Chart -->
+                    <div class="grid-stack-item" gs-id="widget-pac-chart" gs-x="0" gs-y="10" gs-w="12" gs-h="4"
+                        gs-min-w="6" gs-min-h="3">
+                        <div class="grid-stack-item-content glass-panel p-3 sm:p-6 rounded-2xl flex flex-col">
+                            <div
+                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                                <h3 class="text-slate-700 dark:text-slate-300 font-semibold flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-emerald-500 dark:text-emerald-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    </svg>
+                                    VWCE Price &amp; PAC History
+                                </h3>
+                                <div
+                                    class="flex space-x-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50">
+                                    <button onclick="filterChart('pac', '1M', this)"
+                                        class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                        data-filter="1M">1M</button>
+                                    <button onclick="filterChart('pac', '6M', this)"
+                                        class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                        data-filter="6M">6M</button>
+                                    <button onclick="filterChart('pac', 'YTD', this)"
+                                        class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                        data-filter="YTD">YTD</button>
+                                    <button onclick="filterChart('pac', '1Y', this)"
+                                        class="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded transition-colors"
+                                        data-filter="1Y">1Y</button>
+                                    <button onclick="filterChart('pac', 'ALL', this)"
+                                        class="px-2 py-1 text-xs font-medium rounded bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-white shadow"
+                                        data-filter="ALL">ALL</button>
+                                </div>
+                            </div>
+                            <div class="relative h-80 w-full overflow-x-auto overflow-y-hidden">
+                                <div class="w-full h-full md:min-w-[800px]">
+                                    <canvas id="pacChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!-- End grid-stack -->
+            </div> <!-- End view-dashboard -->
+
+            <!-- Other Views (Placeholders) -->
+            <div id="view-financials" class="page-view hidden space-y-6">
+                <!-- Hero Card: Net Worth Summary -->
+                <div class="hero-card glass-panel p-6 rounded-2xl">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <p
+                                class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold mb-1">
+                                Net Worth Attuale</p>
+                            <p id="nw-hero-value"
+                                class="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-white privacy-sensitive">
+                                € 89.240</p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <span id="nw-hero-ytd"
+                                    class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">+€11.240 YTD
+                                    (+14.4%)</span>
+                                <span id="nw-hero-ann" class="annualized-badge"><i
+                                        class="fas fa-chart-line text-[8px]"></i> Ann. +50.2%</span>
+                            </div>
+                        </div>
+                        <div id="nw-breakdown" class="w-full sm:w-64 space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Asset Command Bar -->
+                <div class="asset-command w-fit">
+                    <button class="asset-command-btn active" onclick="filterAssets('all', this)">All Assets</button>
+                    <button class="asset-command-btn" onclick="filterAssets('stocks', this)">Stocks/ETF</button>
+                    <button class="asset-command-btn" onclick="filterAssets('liquidity', this)">Liquidity</button>
+                    <button class="asset-command-btn" onclick="filterAssets('other', this)">Other</button>
+                </div>
+
+                <!-- Assets & Net Worth Monthly Breakdown Table -->
+                <div id="financials-content" class="glass-panel p-6 rounded-2xl w-full overflow-x-auto">
+                    <p class="text-slate-400">Loading detailed breakdown...</p>
+                </div>
+
+                <!-- Passive Income Chart -->
+                <div class="glass-panel p-3 sm:p-6 rounded-2xl relative">
+                    <div class="flex justify-between items-center mb-4 pr-1 sm:pr-4">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-emerald-500"></i>
+                            Passive Income
+                        </h3>
+                        <div class="text-right">
+                            <span
+                                class="text-xs text-slate-500 dark:text-slate-400 block mb-0.5 uppercase tracking-wider font-semibold">Total
+                                All-Time</span>
+                            <span id="dividends-total"
+                                class="text-xl font-bold text-emerald-600 dark:text-emerald-400 privacy-sensitive">€
+                                0.00</span>
+                        </div>
+                    </div>
+                    <div class="relative h-80 w-full overflow-x-auto overflow-y-hidden">
+                        <div class="w-full h-full md:min-w-[700px]">
+                            <canvas id="dividendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- View: Cash Flow Analysis -->
+            <div id="view-cashflow" class="page-view hidden space-y-6">
+                <h2
+                    class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-200">
+                    Cash Flow Analysis</h2>
+
+                <!-- Current Month Waterfall Section -->
+                <div class="glass-panel p-3 sm:p-6 rounded-2xl relative mb-6">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4 text-center sm:text-left">
+                        Current Month Cash Waterfall
+                    </h3>
+                    <div class="relative h-[250px] w-full overflow-x-auto overflow-y-hidden">
+                        <div class="w-full h-full md:min-w-[600px]">
+                            <div id="waterfallChart" class="w-full h-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sankey Chart Section -->
+                <div class="glass-panel p-3 sm:p-6 rounded-2xl relative mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200">Cash Flow Flowchart
+                        </h3>
+
+                        <!-- Sankey Filters Button Group -->
+                        <div class="inline-flex rounded-md shadow-sm" role="group">
+                            <button type="button" onclick="app.setSankeyFilter('month')" id="sankey-btn-month"
+                                class="sankey-filter-btn px-4 py-2 text-sm font-medium text-slate-900 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700 transition-colors">
+                                Mese Corrente
+                            </button>
+                            <button type="button" onclick="app.setSankeyFilter('ytd')" id="sankey-btn-ytd"
+                                class="sankey-filter-btn px-4 py-2 text-sm font-medium text-slate-900 bg-white border-t border-b border-r border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700 transition-colors">
+                                YTD
+                            </button>
+                            <button type="button" onclick="app.setSankeyFilter('total')" id="sankey-btn-total"
+                                class="sankey-filter-btn active px-4 py-2 text-sm font-medium text-white bg-emerald-500 border border-emerald-500 rounded-r-md hover:bg-emerald-600 dark:bg-emerald-600 dark:border-emerald-600 dark:text-white dark:hover:bg-emerald-700 transition-colors">
+                                Totale
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative h-[500px] w-full overflow-x-auto overflow-y-hidden">
+                        <div class="w-full h-full md:min-w-[800px]">
+                            <div id="sankeyChart" class="w-full h-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Bar Chart Section -->
+                <div class="glass-panel p-3 sm:p-6 rounded-2xl relative">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4">Outcome vs Income
+                    </h3>
+                    <div class="h-64 w-full overflow-x-auto overflow-y-hidden">
+                        <div class="w-full h-full md:min-w-[600px]">
+                            <canvas id="cashFlowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tables Section -->
+                <div id="cashflow-tables" class="space-y-8">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+            <!-- View: Asset Allocation -->
+            <div id="view-allocation" class="page-view hidden space-y-6">
+                <h2
+                    class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500 dark:from-blue-400 dark:to-indigo-200">
+                    Asset Allocation</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Assets Chart -->
+                    <div class="glass-panel p-3 sm:p-6 rounded-2xl flex flex-col items-center">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4">By Asset Class
+                        </h3>
+                        <div class="w-full h-64 relative">
+                            <canvas id="allocationChartAssets"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Geography Chart -->
+                    <div class="glass-panel p-3 sm:p-6 rounded-2xl flex flex-col items-center">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4">By Geography
+                        </h3>
+                        <div class="w-full h-64 relative">
+                            <canvas id="allocationChartGeo"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rebalancing Summary Cards -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <i class="fas fa-balance-scale text-blue-500"></i> Rebalancing Overview
+                        </h3>
+                    </div>
+                    <div id="rebalancing-summary" class="space-y-3">
+                        <!-- Injected by JS: one card per asset class -->
+                    </div>
+                </div>
+
+                <!-- Detailed Holdings: "Cosa comprare?" -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="typo-heading text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            Target Allocation
+                        </h3>
+                        <span
+                            class="text-xs text-slate-500 dark:text-slate-400 font-medium bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Holdings
+                            Breakdown</span>
+                    </div>
+                    <div id="rebalancing-holdings" class="space-y-3">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+            <div id="view-history" class="page-view hidden space-y-6">
+                <h2
+                    class="text-2xl md:text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500 dark:from-purple-400 dark:to-pink-200">
+                    Historical Data <span id="history-years-title" class="hidden md:inline"></span>
+                </h2>
+
+                <div id="history-cards" class="space-y-6">
+                    <!-- Cards for 2025, 2024 injected here -->
+                </div>
+
+                <!-- Hall of Fame Section -->
+                <div id="hof-section" class="mt-12">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+                            <i class="fas fa-trophy text-white text-lg"></i>
+                        </div>
+                        <h2
+                            class="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-400 dark:from-amber-300 dark:to-yellow-200">
+                            Hall of Fame
+                        </h2>
+                    </div>
+
+                    <!-- Loading state -->
+                    <div id="hof-loading" class="flex flex-col items-center justify-center h-32 space-y-3">
+                        <div class="w-8 h-8 border-3 border-amber-400 border-t-transparent rounded-full animate-spin">
+                        </div>
+                        <p class="text-slate-400 text-sm animate-pulse">Loading records...</p>
+                    </div>
+
+                    <!-- Monthly Records -->
+                    <div id="hof-monthly" class="hidden">
+                        <h3
+                            class="text-lg font-semibold text-slate-600 dark:text-slate-300 mb-4 flex items-center space-x-2">
+                            <i class="fas fa-calendar-day text-blue-400"></i>
+                            <span>Monthly Records</span>
+                        </h3>
+                        <div id="hof-monthly-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                            <!-- Leaderboard cards injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Yearly Records -->
+                    <div id="hof-yearly" class="hidden">
+                        <h3
+                            class="text-lg font-semibold text-slate-600 dark:text-slate-300 mb-4 flex items-center space-x-2">
+                            <i class="fas fa-calendar-check text-emerald-400"></i>
+                            <span>Yearly Records</span>
+                        </h3>
+                        <div id="hof-yearly-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Leaderboard cards injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="text-center text-slate-500 text-sm py-8">
+            <p>&copy; 2026 Velar — Demo Mode. No real financial data.</p>
+        </footer>
+    </div>
+
+    <!-- Event Modal (Hidden by Default) -->
+    <div id="event-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="typo-heading text-slate-800 dark:text-slate-200">Add Milestone</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Il marker verrà aggiunto al grafico
+                    storico.</p>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block typo-label text-slate-700 dark:text-slate-300 mb-1">Milestone Title</label>
+                    <input type="text" id="event-title"
+                        class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block typo-label text-slate-700 dark:text-slate-300 mb-1">Date</label>
+                        <input type="date" id="event-date"
+                            class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block typo-label text-slate-700 dark:text-slate-300 mb-1">Color
+                            (Optional)</label>
+                        <select id="event-color"
+                            class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white">
+                            <option value="rgba(59, 130, 246, 0.8)">Blu (Generico)</option>
+                            <option value="rgba(16, 185, 129, 0.8)">Verde (Positivo)</option>
+                            <option value="rgba(239, 68, 68, 0.8)">Rosso (Negativo)</option>
+                            <option value="rgba(168, 85, 247, 0.8)">Viola (Speciale)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Existing Events List -->
+                <div class="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <h4
+                        class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3 flex justify-between items-center">
+                        <span>Saved Milestones</span>
+                        <span id="events-count-badge"
+                            class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs px-2 py-0.5 rounded-full">0</span>
+                    </h4>
+                    <div id="existing-events-list" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- Injected by JS -->
+                        <div class="text-xs text-slate-500 text-center py-4 italic">No milestones recorded.</div>
+                    </div>
+                </div>
+
+            </div>
+            <div
+                class="p-5 border-t border-slate-200 dark:border-slate-700 flex justify-end space-x-3 bg-slate-50 dark:bg-slate-800/50">
+                <button onclick="app.ui.closeEventModal()"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Cancel</button>
+                <button onclick="app.ui.saveNewEvent()" id="event-save-btn"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-colors flex items-center">
+                    <span id="event-save-text">Save</span>
+                    <i id="event-save-spinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-[200] hidden opacity-0 transition-opacity duration-300">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+
+        <!-- Panel -->
+        <div
+            class="settings-panel absolute left-0 top-0 h-full w-full max-w-md bg-slate-50 dark:bg-slate-900 shadow-2xl overflow-y-auto -translate-x-full transition-transform duration-300 ease-out">
+
+            <!-- Header -->
+            <div class="sticky top-0 z-10 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 px-6 py-4 flex items-center justify-between"
+                style="padding-top: max(1rem, env(safe-area-inset-top))">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white">Settings</h2>
+                <button onclick="closeSettingsModal()"
+                    class="w-8 h-8 rounded-full bg-slate-200/50 dark:bg-slate-800/50 flex items-center justify-center hover:bg-slate-300/50 dark:hover:bg-slate-700/50 transition-colors">
+                    <i class="fas fa-times text-slate-500 dark:text-slate-400 text-sm"></i>
+                </button>
+            </div>
+
+            <div class="px-6 py-6 space-y-8">
+
+                <!-- Profile Card -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center space-x-4">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-500/30">
+                            <span>M</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-slate-800 dark:text-white">Marco Rossi</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Investor · Demo Account</p>
+                            <p class="text-xs text-blue-500 dark:text-blue-400 mt-1">Dati di esempio — nessun dato reale
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance -->
+                <div>
+                    <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+                        Aspetto</h4>
+                    <div class="space-y-2">
+                        <div class="settings-row" onclick="toggleTheme(); syncSettingsToggles();">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-indigo-100 dark:bg-indigo-900/40 text-indigo-500"><i
+                                        class="fas fa-moon"></i></div>
+                                <div>
+                                    <p class="settings-label">Tema Scuro</p>
+                                    <p class="settings-sublabel" id="settings-theme-value">Attivo</p>
+                                </div>
+                            </div>
+                            <div id="settings-theme-toggle" class="settings-toggle"></div>
+                        </div>
+                        <div class="settings-row" onclick="togglePrivacyMode(); syncSettingsToggles();">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-rose-100 dark:bg-rose-900/40 text-rose-500"><i
+                                        class="fas fa-eye-slash"></i></div>
+                                <div>
+                                    <p class="settings-label">Privacy Mode</p>
+                                    <p class="settings-sublabel">Nascondi i valori sensibili</p>
+                                </div>
+                            </div>
+                            <div id="settings-privacy-toggle" class="settings-toggle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allocazione Target -->
+                <div>
+                    <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+                        Allocazione Target</h4>
+                    <div class="space-y-2" id="settings-allocation-targets"></div>
+                </div>
+
+                <!-- Budget -->
+                <div>
+                    <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+                        Budget Mensile</h4>
+                    <div class="space-y-2" id="settings-budget-items"></div>
+                </div>
+
+                <!-- Dividendi -->
+                <div>
+                    <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+                        Dividendi & Cedole</h4>
+                    <div class="space-y-2">
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-500"><i
+                                        class="fas fa-hand-holding-usd"></i></div>
+                                <div>
+                                    <p class="settings-label">Tracking Dividendi</p>
+                                    <p class="settings-sublabel">Monitora i dividendi automaticamente</p>
+                                </div>
+                            </div>
+                            <div class="settings-toggle active readonly-input"></div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-blue-100 dark:bg-blue-900/40 text-blue-500"><i
+                                        class="fas fa-redo"></i></div>
+                                <div>
+                                    <p class="settings-label">Reinvestimento Auto</p>
+                                    <p class="settings-sublabel">Reinvesti dividendi in PAC</p>
+                                </div>
+                            </div>
+                            <div class="settings-toggle readonly-input"></div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-amber-100 dark:bg-amber-900/40 text-amber-500"><i
+                                        class="fas fa-percentage"></i></div>
+                                <div>
+                                    <p class="settings-label">Aliquota Fiscale</p>
+                                    <p class="settings-sublabel">Ritenuta su redditi da capitale</p>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300">26%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div>
+                    <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+                        Informazioni</h4>
+                    <div class="space-y-2">
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-slate-100 dark:bg-slate-800/40 text-slate-500"><i
+                                        class="fas fa-info-circle"></i></div>
+                                <div>
+                                    <p class="settings-label">Versione App</p>
+                                    <p class="settings-sublabel">v2.0 — Aprile 2026</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-purple-100 dark:bg-purple-900/40 text-purple-500"><i
+                                        class="fas fa-database"></i></div>
+                                <div>
+                                    <p class="settings-label">Sorgente Dati</p>
+                                    <p class="settings-sublabel">Dati di esempio (Demo Mode)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="https://github.com/GuglielmoVolpini/net-worth-pwa" target="_blank"
+                            class="settings-row">
+                            <div class="settings-row-left">
+                                <div class="settings-icon bg-gray-100 dark:bg-gray-800/40 text-gray-500"><i
+                                        class="fab fa-github"></i></div>
+                                <div>
+                                    <p class="settings-label">Codice Sorgente</p>
+                                    <p class="settings-sublabel">GitHub Repository</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-external-link-alt text-slate-300 dark:text-slate-600 text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <p class="text-center text-[10px] text-slate-400 dark:text-slate-600 pb-4">
+                    Velar Demo v2.0 — Built with ❤️
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
